@@ -9,24 +9,46 @@ using TrackerLibrary.Models;
 
 namespace TrackerLibrary.DataAccess
 {
-    //@PlaceNumber int,
-    //@PlaceName nvarchar(50),
-    //@PrizeAmount money,
-    //@PrizePercentage float,
-    //@id int =0 output
 
     public class SqlConnector : IDataConnection
     {
-        //TODO - Make CreatePrize method actually save to the database
+        private const string db = "Tournament";
         /// <summary>
-        /// Save a new prize to the database.
+        /// Save a new person to the database.
         /// </summary>
         /// <param name="model"></param>
-        /// <returns>The prize information, including the unique identifier.</returns>
-        public PrizeModel CreatePrize(PrizeModel model)
+        /// <returns></returns>
+        public PersonModel CreatePerson(PersonModel model)
+        {
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GlobalConfig.CnnString(db)))
+            {
+                //Dapper parameter for model setup
+                var p = new DynamicParameters();
+                p.Add("@FirstName", model.FirstName);
+                p.Add("@LastName", model.LastName);
+                p.Add("@EmailAddress", model.EmailAddress);
+                p.Add("@CellphoneNumber", model.CellphoneNumber);
+                p.Add("@id", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                //using stored procedures, that is in sql database
+                connection.Execute("dbo.spPeople_Insert", p, commandType: CommandType.StoredProcedure);
+
+                model.Id = p.Get<int>("@id");
+
+                return model;
+
+            }
+        }
+            //TODO - Make CreatePrize method actually save to the database
+            /// <summary>
+            /// Save a new prize to the database.
+            /// </summary>
+            /// <param name="model"></param>
+            /// <returns>The prize information, including the unique identifier.</returns>
+            public PrizeModel CreatePrize(PrizeModel model)
         {
             //TODO - Connection string for Remember
-            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GlobalConfig.CnnString("Tournament")))
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GlobalConfig.CnnString(db)))
             {
                 //Dapper parameter for model setup
                 var p = new DynamicParameters();
@@ -36,7 +58,7 @@ namespace TrackerLibrary.DataAccess
                 p.Add("@PrizePercentage", model.PrizePercentage);
                 p.Add("@id", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-                //using stored procedures, taht is in sql database
+                //using stored procedures, that is in sql database
                 connection.Execute("dbo.spPrizes_Insert", p, commandType: CommandType.StoredProcedure);
 
                 model.Id = p.Get<int>("@id");
@@ -44,6 +66,16 @@ namespace TrackerLibrary.DataAccess
                 return model;
 
             }
+        }
+
+        public List<PersonModel> GetPerson_All()
+        {
+            List<PersonModel> output;
+            using (IDbConnection connection=new System.Data.SqlClient.SqlConnection(GlobalConfig.CnnString(db)))
+            {
+                output = connection.Query<PersonModel>("dbo.spPeople_GetAll").ToList();
+            }
+            return output;
         }
     }
 }
