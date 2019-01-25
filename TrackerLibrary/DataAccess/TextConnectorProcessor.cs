@@ -75,6 +75,33 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             return output;
         }
 
+        public static List<TeamModel> ConvertToTeamModels(this List<string> lines)
+        {
+            //id,team's name,list of id's seperated by the pipe
+            //3,First Team,1|3|5
+
+            List<TeamModel> output = new List<TeamModel>();
+            foreach (string line in lines)
+            {
+                string[] cols = line.Split(',');
+
+                TeamModel p = new TeamModel();
+                p.Id = int.Parse(cols[0]);
+                p.TeamName = cols[1];
+                string[] teamMembers = cols[2].Split('|');
+                foreach (var item in teamMembers)
+                {
+                    p.TeamMembers.Add(new PersonModel() {Id=item };
+                }
+                p. = cols[2];
+                p.EmailAddress = cols[3];
+                p.CellphoneNumber = cols[4];
+
+                output.Add(p);
+            }
+            return output;
+        }
+
         public static void SaveToPrizeFile(this List<PrizeModel> models, string fileName)
         {
             List<string> lines = new List<string>();
