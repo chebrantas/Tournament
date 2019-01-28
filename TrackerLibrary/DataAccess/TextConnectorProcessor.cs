@@ -9,8 +9,8 @@ using TrackerLibrary.Models;
 
 namespace TrackerLibrary.DataAccess.TextHelpers
 {
-   
-    
+
+
     //Find Max ID
     //Add new rwcord with the new ID MaxId+1
     //Convert Prizes to List<string>
@@ -28,7 +28,7 @@ namespace TrackerLibrary.DataAccess.TextHelpers
         /// Takes full path file location for parameter
         /// </summary>
         ///Load text file
-        public static List<string>LoadFile(this string file)
+        public static List<string> LoadFile(this string file)
         {
             if (!File.Exists(file))
             {
@@ -38,7 +38,7 @@ namespace TrackerLibrary.DataAccess.TextHelpers
         }
 
         //Convert the text to List<PrizeModel>
-        public static List<PrizeModel>ConvertToPrizeModels(this List<string> lines)
+        public static List<PrizeModel> ConvertToPrizeModels(this List<string> lines)
         {
             List<PrizeModel> output = new List<PrizeModel>();
             foreach (string line in lines)
@@ -75,29 +75,29 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             return output;
         }
 
-        public static List<TeamModel> ConvertToTeamModels(this List<string> lines)
+        public static List<TeamModel> ConvertToTeamModels(this List<string> lines, string peopleFileName)
         {
             //id,team's name,list of id's seperated by the pipe
             //3,First Team,1|3|5
 
             List<TeamModel> output = new List<TeamModel>();
+            List<PersonModel> people = peopleFileName.FullFilePath().LoadFile().ConvertToPersonModels();
+
             foreach (string line in lines)
             {
                 string[] cols = line.Split(',');
 
-                TeamModel p = new TeamModel();
-                p.Id = int.Parse(cols[0]);
-                p.TeamName = cols[1];
-                string[] teamMembers = cols[2].Split('|');
-                foreach (var item in teamMembers)
-                {
-                    p.TeamMembers.Add(new PersonModel() {Id=item };
-                }
-                p. = cols[2];
-                p.EmailAddress = cols[3];
-                p.CellphoneNumber = cols[4];
+                TeamModel t = new TeamModel();
+                t.Id = int.Parse(cols[0]);
+                t.TeamName = cols[1];
 
-                output.Add(p);
+                string[] personIds = cols[2].Split('|');
+
+                foreach (string id in personIds)
+                {
+                    t.TeamMembers.Add(people.Where(m => m.Id == int.Parse(id)).First());
+                }
+                output.Add(t);
             }
             return output;
         }
@@ -110,7 +110,7 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             {
                 lines.Add($"{p.Id},{p.PlaceNumber},{p.PlaceName},{p.PrizeAmount},{p.PrizePercentage}");
             }
-            File.WriteAllLines(fileName.FullFilePath(),lines);
+            File.WriteAllLines(fileName.FullFilePath(), lines);
         }
 
         //Extention method exist only on concrete Model method list. Like this below on PersonModel methods list
@@ -124,5 +124,32 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             }
             File.WriteAllLines(fileName.FullFilePath(), lines);
         }
+
+        public static void SaveToTeamFile(this List<TeamModel> models, string fileName)
+        {
+            List<string> lines = new List<string>();
+
+            foreach (TeamModel t in models)
+            {
+                lines.Add($"{t.Id},{t.TeamName},{ConvertPeopleListToString(t.TeamMembers)}");
+            }
+            File.WriteAllLines(fileName.FullFilePath(), lines);
+        }
+
+        private static string ConvertPeopleListToString(List<PersonModel> people)
+        {
+            string output = "";
+            if (people.Count == 0)
+            {
+                return "";
+            }
+            foreach (PersonModel p in people)
+            {
+                output += $"{p.Id}|";
+            }
+            output = output.Substring(0, output.Length - 1);
+            return output;
+        }
+
     }
 }

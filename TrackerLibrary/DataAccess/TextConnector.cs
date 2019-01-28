@@ -69,22 +69,22 @@ namespace TrackerLibrary.DataAccess
         {
             //Load text file
             //Convert the text to List<PrizeModel>
-            List<TeamModel> teams = TeamFile.FullFilePath().LoadFile().ConvertToTeamModels();
+            List<TeamModel> teams = TeamFile.FullFilePath().LoadFile().ConvertToTeamModels(PeopleFile);
 
             //Find Max ID
             int currentId = 1;
-            if (prizes.Count > 0)
+            if (teams.Count > 0)
             {
-                currentId = prizes.OrderByDescending(p => p.Id).First().Id + 1;
+                currentId = teams.OrderByDescending(p => p.Id).First().Id + 1;
             }
             model.Id = currentId;
 
             //Add new record with the new ID MaxId+1
-            prizes.Add(model);
+            teams.Add(model);
 
             //Convert Prizes to List<string>
             //Save the List<string> to the text file
-            prizes.SaveToPrizeFile(PrizesFile);
+            teams.SaveToTeamFile(TeamFile);
 
             return model;
         }
