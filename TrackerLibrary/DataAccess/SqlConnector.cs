@@ -97,6 +97,49 @@ namespace TrackerLibrary.DataAccess
             }
         }
 
+        public TournamentModel CreateTournament(TournamentModel model)
+        {
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GlobalConfig.CnnString(db)))
+            {
+                //Dapper parameter for model setup
+                var p = new DynamicParameters();
+                p.Add("@TournamentName", model.TournamentName);
+                p.Add("@EntryFee", model.EntryFee);
+                p.Add("@id", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                //using stored procedures, that is in sql database
+                connection.Execute("dbo.spTournaments_Insert", p, commandType: CommandType.StoredProcedure);
+                //geting ID after team is created
+                model.Id = p.Get<int>("@id");
+
+                foreach (PrizeModel pm in model.Prizes)
+                {
+                    //Dapper parameter for model setup
+                    p = new DynamicParameters();
+                    p.Add("@TournamentId", model.Id);
+                    p.Add("@PrizeId", pm.Id);
+                    p.Add("@id", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                    //using stored procedures, that is in sql database
+                    connection.Execute("dbo.spTournamentPrizes_Insert", p, commandType: CommandType.StoredProcedure);
+                }
+
+                foreach (TeamModel tm in model.EnteredTeams)
+                {
+                    //Dapper parameter for model setup
+                    p = new DynamicParameters();
+                    p.Add("@TournamentId", model.Id);
+                    p.Add("@TeamId", tm.Id);
+                    p.Add("@id", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                    //using stored procedures, that is in sql database
+                    connection.Execute("dbo.spTournamentEntries_Insert", p, commandType: CommandType.StoredProcedure);
+                }
+                return model;
+
+            }
+        }
+
         public List<PersonModel> GetPerson_All()
         {
             List<PersonModel> output;
