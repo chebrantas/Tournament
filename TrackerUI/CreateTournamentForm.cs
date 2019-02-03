@@ -134,8 +134,17 @@ namespace TrackerUI
             tm.EntryFee = fee;
             tm.EnteredTeams = selectedTeams;
             tm.Prizes = selectedPrizes;
-            
+
             //TODO Wire our matchups
+            TournamentLogic.CreateRounds(tm);
+
+
+
+            //Order our list randomly of teams
+            //Check if it is big enough - if not , add in byes Exs(14 teams not good, need 16 so +2 byes)
+            //need teams number 2*2*2*2 - 2^4 
+            //Create our first round of matchups
+            //Create every round after that 8 matchups - 4 matchups - 2 matchups - 1 matchup
 
             
             //Create Tournament entry+

@@ -136,6 +136,8 @@ namespace TrackerLibrary.DataAccess.TextHelpers
 
                 string[] roundFirst = cols[5].Split('|');
                 //TODO capture rounds information
+
+
                 //string[] roundSecond = roundFirst[0].Split('^');
                 //foreach (var item in roundFirst)
                 //{
