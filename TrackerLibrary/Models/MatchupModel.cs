@@ -13,7 +13,7 @@ namespace TrackerLibrary.Models
         /// </summary>
         public int Id { get; set; }
         /// <summary>
-        /// The set of teams that were involved in this match.
+        /// The set of teams that were involved in this match. dazniausiai 2 komandos
         /// </summary>
         public List<MatchupEntryModel> Entries { get; set; } = new List<MatchupEntryModel>();
         /// <summary>

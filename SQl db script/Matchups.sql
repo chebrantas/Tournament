@@ -1,7 +1,17 @@
 USE [Tournament]
 GO
 
-/****** Object:  Table [dbo].[Matchups]    Script Date: 2019-01-21 16:23:43 ******/
+ALTER TABLE [dbo].[Matchups] DROP CONSTRAINT [FK_Matchups_Tournaments]
+GO
+
+ALTER TABLE [dbo].[Matchups] DROP CONSTRAINT [FK_Matchups_Teams]
+GO
+
+/****** Object:  Table [dbo].[Matchups]    Script Date: 2019-02-04 8:48:57 ******/
+DROP TABLE [dbo].[Matchups]
+GO
+
+/****** Object:  Table [dbo].[Matchups]    Script Date: 2019-02-04 8:48:57 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -12,6 +22,7 @@ CREATE TABLE [dbo].[Matchups](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[WinnerId] [int] NOT NULL,
 	[MatchupRound] [int] NOT NULL,
+	[TournamentId] [int] NOT NULL,
  CONSTRAINT [PK_Matchups] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -24,5 +35,12 @@ REFERENCES [dbo].[Teams] ([id])
 GO
 
 ALTER TABLE [dbo].[Matchups] CHECK CONSTRAINT [FK_Matchups_Teams]
+GO
+
+ALTER TABLE [dbo].[Matchups]  WITH CHECK ADD  CONSTRAINT [FK_Matchups_Tournaments] FOREIGN KEY([TournamentId])
+REFERENCES [dbo].[Tournaments] ([id])
+GO
+
+ALTER TABLE [dbo].[Matchups] CHECK CONSTRAINT [FK_Matchups_Tournaments]
 GO
 
