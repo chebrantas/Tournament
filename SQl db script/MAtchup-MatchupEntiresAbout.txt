@@ -1,0 +1,26 @@
+Matchup
+Raðosi Matchup(2 komandu susitikimas) ID, WinnerId(ið pradziu NULL), MatchupRound pirmas Round su Byes jei truksta komandu,
+tada sekantys raundai nuo komandu skaiciaus priklauso, dalinam is 2 ir gauname raundu skaiciu. Jei 4 komandos priamme raunde bus 2 yrasai nes 2 poros
+sekanciame raunde 1 yrasas nes is 4 komandu iseina po 1 nugaletoja ir dar 1 macas laukia.
+
+id	TournamentId	WinnerId	MatchupRound
+7	3		NULL		1
+8	3		NULL		1
+9	3		NULL		2
+
+
+
+MatchupEntries
+Surasomi tikslesni duomenys kas su kuo varzosi. Pvz id 9 parodo kad kovoja komanda kurios ID 2 ir ji yra viena kadangi MatchupId rodo tik viena 7 yrasa, tai reiskia,
+kad sita komanda buvo sustatyta su BYE(tucia vieta) ir automatiskai eina toliau, nes varzovo realaus nera. Id 10-11 rodo kad susitinka komandos su ID 8 ir 9,
+ju kovos ID(MatchupId) yra 8, todel mes ir matome 2 yrasus. ID 9-10-11 ParentMatchup yra Null, nes tai pirmas raundas ir pries tai raundu dar nebuvo. ID 12-13 parodo
+kad sekanti pora varzysi kuriu kovos numeris(MatchupId) yra 9, atitinkamai parodoma, kad komandos atejo is ankstesnes poros(ParentMatchupId 7 8) kaip laimetojos,
+laimetojas savo ruoztu pazymimas lenteleje Matchup
+
+
+id	MatchupId	ParentMatchupId		TeamCompetingId		Score
+9	7		NULL			2			NULL
+10	8		NULL			8			NULL
+11	8		NULL			9			NULL
+12	9		7			NULL			NULL
+13	9		8			NULL			NULL
