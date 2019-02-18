@@ -10,10 +10,13 @@ namespace TrackerLibrary.DataAccess
 {
     public class TextConnector : IDataConnection
     {
+        //TODO refactor this to be in 1 place
         private const string PrizesFile = "PrizeModels.csv";
         private const string PeopleFile = "PersonModels.csv";
         private const string TeamFile = "TeamModels.csv";
         private const string TournamentFile = "TournamentModels.csv";
+        private const string MatchupFile = "MatchupModels.csv";
+        private const string MatchupEntryFile = "MatchupEntryModels.csv";
 
 
         public PersonModel CreatePerson(PersonModel model)
@@ -103,6 +106,9 @@ namespace TrackerLibrary.DataAccess
                 currentId = tournaments.OrderByDescending(tm => tm.Id).First().Id + 1;
             }
             model.Id = currentId;
+
+            //operate on  one specific model or list of models
+            model.SaveRoundsToFile(MatchupFile, MatchupEntryFile);
 
             //Add new record with the new ID MaxId+1
             tournaments.Add(model);
